@@ -1,0 +1,253 @@
+:root {
+  --backgroundColor: #1b1b1b;
+  --barColor: #212f45;
+  --sideBarColor: #272727;
+}
+
+/*scroll bar*/
+*{
+  scrollbar-width: none;
+  
+}
+
+/*Desabilitar seleção*/
+*{
+  user-select: none; /* Padrão moderno */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+}
+
+/* Reset CSS */
+html, body {
+  box-sizing: border-box;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--backgroundColor);
+}
+
+.inner-content {
+  display: flex;
+  width: 100%;
+  height: 700px;
+  justify-content: center;
+}
+
+/* Side Menu */
+.side-menu{
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  width: 5vw;
+  height: 100%;
+  border-right: 2px solid;
+  background-color: var(--sideBarColor);
+  position: fixed;
+  left: 0;
+  overflow-x: hidden;
+  border-image-slice:1 ;
+  border-image-source: linear-gradient(to bottom,  #491F52,#CF0A60  ) ;
+  justify-content: space-around;
+  transition: all ease 0.3s;
+}
+
+
+.side-menu img {
+  width: 128px;
+  height: 128px;
+}
+
+
+#logo-div
+{
+  margin: 20px 0 40px 0;
+  position: absolute;
+  top: 0;
+  height: fit-content;
+  width: 100%;
+  text-align: center;
+
+}
+
+/* Navbar */
+.nav-bar {
+  z-index: 99;
+  position: fixed;
+  width: 100%;
+  background-color: var(--backgroundColor);
+  text-align: center;
+}
+
+.layout-buttons
+{
+  position: absolute;
+  display: flex;
+  width: 20%;
+  height: 60%;
+  justify-content: right;
+  align-items: center;
+  top: 10px;
+  right: 10px;
+}
+
+
+/* Buttons */
+button {
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.side-buttons-div{
+  margin-top: 100px;
+  gap: 50px;
+  display: grid;
+  width: 100%;
+  height: 80%;
+  text-align: center;
+}
+
+.side-button {
+  padding: 5px;
+  color: white;
+  font-size: large;
+  text-wrap:wrap;
+}
+
+.side-button:hover
+{
+  transform: scale(1.2);
+  background-color: #CF0A60;
+  border-radius: 0 20px 20px 0;
+  transition: all ease 0.3s;
+}
+
+.side-button img{
+  width: 32px;
+  height: 32px;
+  color: white;
+}
+
+/* Library Section */
+.library {
+  padding: 30px;
+  margin-top: 150px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  background-color: var(--backgroundColor);
+  width: 80%;
+}
+
+/* Game Container */
+.game-container {
+  margin: 10px;
+  width: 200px;
+  height: 300px;
+  border-radius: 5px;
+  background-color: white;
+  overflow: hidden;
+  position: relative;
+}
+
+.game-container:hover, .game-container.selected {
+  transform: scale(1.2); /* Aumenta o tamanho do contêiner */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); /* Adiciona uma sombra para criar profundidade */
+  z-index: 10; /* Coloca o contêiner acima dos outros */
+  border: 5px solid;
+  border-image-slice: 44;
+  border-image-source: linear-gradient(to bottom,  #491F52,#CF0A60  );
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Adiciona uma transição suave */
+}
+
+.game-container div {
+  background-color: black;
+  color: white;
+  width: 100%;
+  height: 50px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  text-align: center;
+  opacity: 0.9;
+}
+
+/* searchbar*/
+.search-bar {
+  position: relative;
+  left:30vw;
+  margin-top: 30px;
+  padding: 3px;
+  border-radius: 30px;
+  width: 40%;
+  background-image: linear-gradient(to right, #491F52, #CF0A60); 
+  background-clip: padding-box;
+  text-align: center;
+}
+
+.search-bar input {
+  margin-left: 1px;
+  width: 99%; 
+  height: 100%;
+  font-size: 24px;
+  border: none; 
+  border-radius: 30px; 
+  padding-bottom: 10px;
+  text-align: center;
+}
+
+.search-bar img
+{
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  top: .4vw;
+  left: 1vw;
+}
+
+/* Remove a borda de foco padrão do input */
+.search-bar input:focus {
+  outline: none;
+}
+
+/* Filters */
+#filters {
+  display: flex;
+  color: white;
+  font-size: larger;
+  justify-content: center;
+  align-items: center;
+  gap: 10%;
+}
+
+.filter-button {
+  cursor: pointer;
+}
+
+.filter-button.selected
+{
+  z-index: 10;
+  border-bottom: 4px solid #491F52;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+  transform: scale(1.2);
+  transition: all  ease 0.5s;
+}
+
+.load-bar{
+  display: none;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: fit-content;
+  text-align: center;
+  color: white;
+  font-size: large;
+}

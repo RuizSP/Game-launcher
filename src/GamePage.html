@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Page</title>
+   <link rel="stylesheet" href="styles/gamePage.css">
+   <link rel="stylesheet" href="styles/index.css">
+</head>
+<body id="gamePage">
+      <section id="gameBanner">
+          <h2 id="gameTitle">Game Title</h2>
+          <div class="game-status">
+            <p>
+              <img src="public/svg-spinners--clock.svg" alt="clock">
+              Time Played: <span id="time-played">00:00:00</span>
+            </p>
+            <p>
+              <img src="public/clarity--date-line.svg" alt="date">
+              Last Played: <span>00/00/0000</span>
+            </p>   
+          </div>
+      </section>
+      <section id="gameInfo">
+          <div class="gameDescription">
+              <h3>Game Description: </h3>
+              <p id="gdText">Aqui ficara a descrição do jogo</p>
+          </div>
+          <div class="game-tags" id="game-tags">
+          </div>
+      </section>
+    <footer class="footer">
+          <button id="backButton">
+            Back
+          </button>
+          <button id="playButton">
+            Play
+          </button>
+      </footer>
+      <script src="scripts/gamePage.js"></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+/* styles/form.css */
+:root {
+  --backgroundColor: #1b1b1b;
+  --barColor: #212f45;
+  --sideBarColor: #272727;
+  }
+  
+  body {
+    background-color: var(--backgroundColor);
+    color: #fff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  h2{
+    text-align: center;
+  }
+  form {
+    background-color: var(--sideBarColor);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: 2rem auto;
+    max-width: 600px;
+    padding: 2rem;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+  
+  input[type="text"],
+  input[type="button"] {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    padding: 0.5rem;
+    width: calc(100% - 1.2rem); /* Adjust width to account for padding and border */
+  }
+  
+  input[type="button"] {
+    background-image:  linear-gradient(to right,  #491F52,#CF0A60  );
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    margin-bottom: 1rem;
+  }
+  
+  input[type="button"]:hover {
+    transform: scale(1.1);
+    transition: all ease 0.3s;
+  }
+  
+  input[type="submit"] {
+    background-image:  linear-gradient(to right,  #491F52,#CF0A60  );
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    width: calc(100% - 1.2rem);
+  }
+  
+  input[type="submit"]:hover {
+    transform: scale(1.1);
+    transition: all ease 0.3s;
+  }
+  
+  textarea {
+    width: calc(100% - 1.2rem);
+    border-radius: 4px;
+  }
+
+  #btnBack {
+    position: fixed;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  #btnBack img {
+    width: 48px;
+    height: 48px;
+  }
+
+  #btnBack:hover{
+    transform: scale(1.1);
+    transition: all ease 0.3s;
+  }

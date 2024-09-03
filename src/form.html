@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Game library</title>
+    <link rel="stylesheet" href="styles/form.css" />
+    
+  </head>
+  <body>
+    <h2>Add a Game:</h2>
+    <button id="btnBack">
+      <img src="public/fluent-mdl2--navigate-back.svg" alt="back">
+    </button>
+    <form id="gameForm">
+        <label for="title">Title
+          <input name="title" id="title" type="text" placeholder="game title" required />
+        </label>
+
+        <label for="cover">Cover:
+          <input name="cover" id="cover" type="text" placeholder="image path or url" required/>
+          <input type="button" id="imageInput" value="Select Image" />
+        </label>
+        <label for="description">Description: 
+          <textarea id="description" placeholder="Game description"  rows="10" ></textarea>
+        </label>
+        <label for="executablePath">Exe:
+          <input type="text" id="executablePath" placeholder="Path to executable" required/>
+        </label>
+        <input type="button" id="fileInput" value="Select File" />
+        <input type="submit" value="Add game">
+    </form>
+    <script src="scripts/gameForm.js"></script>
+  
+  </body>
+</html>
