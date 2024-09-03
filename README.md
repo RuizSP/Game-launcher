@@ -1,4 +1,4 @@
-# Game Library
+# Game Launcher
 
 Este projeto está sendo desenvolvido em Electron, com o objetivo de explorar e testar as funcionalidades dessa ferramenta.
 
