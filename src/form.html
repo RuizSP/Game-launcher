@@ -1,35 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html class="mdui-theme-dark">
   <head>
     <meta charset="UTF-8" />
     <title>Game library</title>
+    <link rel="stylesheet" href="../node_modules/mdui/mdui.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <script src="../node_modules/mdui/mdui.global.js"></script>
     <link rel="stylesheet" href="styles/form.css" />
-    
   </head>
   <body>
     <h2>Add a Game:</h2>
-    <button id="btnBack">
-      <img src="public/fluent-mdl2--navigate-back.svg" alt="back">
-    </button>
+    <mdui-button-icon icon="arrow_back" id="btnBack"></mdui-button-icon>
     <form id="gameForm">
-        <label for="title">Title
-          <input name="title" id="title" type="text" placeholder="game title" required />
-        </label>
+        <label for="title">Title</label>
+        <mdui-text-field name="title" id="title" type="text" placeholder="game title" required></mdui-text-field>
 
-        <label for="cover">Cover:
-          <input name="cover" id="cover" type="text" placeholder="image path or url" required/>
-          <input type="button" id="imageInput" value="Select Image" />
-        </label>
-        <label for="description">Description: 
-          <textarea id="description" placeholder="Game description"  rows="10" ></textarea>
-        </label>
-        <label for="executablePath">Exe:
-          <input type="text" id="executablePath" placeholder="Path to executable" required/>
-        </label>
-        <input type="button" id="fileInput" value="Select File" />
-        <input type="submit" value="Add game">
+        <label for="cover">Cover:</label>
+        <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
+            <mdui-text-field name="cover" id="cover" type="text" placeholder="image path or url" required style="flex-grow: 1;"></mdui-text-field>
+            <mdui-button variant="tonal" id="imageInput">Select Image</mdui-button>
+        </div>
+
+        <label for="description">Description:</label>
+        <mdui-text-field id="description" placeholder="Game description" rows="10"></mdui-text-field>
+
+        <label for="executablePath">Exe:</label>
+        <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
+            <mdui-text-field type="text" id="executablePath" placeholder="Path to executable" required style="flex-grow: 1;"></mdui-text-field>
+            <mdui-button variant="tonal" id="fileInput">Select File</mdui-button>
+        </div>
+        
+        <mdui-button variant="filled" type="submit" id="submitBtn">Add game</mdui-button>
     </form>
-    <script src="scripts/gameForm.js"></script>
-  
+    <script src="../dist/scripts/gameForm.js"></script>
   </body>
 </html>

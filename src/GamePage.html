@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="mdui-theme-dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Page</title>
-   <link rel="stylesheet" href="styles/gamePage.css">
-   <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="../node_modules/mdui/mdui.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <script src="../node_modules/mdui/mdui.global.js"></script>
+    <link rel="stylesheet" href="styles/gamePage.css">
+    <link rel="stylesheet" href="styles/index.css">
 </head>
 <body id="gamePage">
       <section id="gameBanner">
@@ -30,13 +34,9 @@
           </div>
       </section>
     <footer class="footer">
-          <button id="backButton">
-            Back
-          </button>
-          <button id="playButton">
-            Play
-          </button>
+          <mdui-button variant="outlined" id="backButton">Back</mdui-button>
+          <mdui-button variant="filled" id="playButton">Play</mdui-button>
       </footer>
-      <script src="scripts/gamePage.js"></script>
+      <script src="../dist/scripts/gamePage.js"></script>
 </body>
 </html>

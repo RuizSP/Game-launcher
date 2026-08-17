@@ -3,15 +3,16 @@ const { getCurrentGameData, createGameObject, saveGameData } = require('../Manag
 const { legendaryExePath } = require('../Managers/LegendaryAuthManager');
 const igdbRequisition = require('../MetaDataApi/IGDBApiConection');
 const logger = require('../Managers/ErrorLogger');
+import { ILegendaryInstalledGame, IGame, IIGDBGame, IIGDBCover } from '../../types/index';
 
 // Função para procurar jogos instalados via Legendary
-async function findLegendaryInstalledGames() {
+async function findLegendaryInstalledGames(): Promise<void> {
     try {
-        const existingGames = await getCurrentGameData();
+        const existingGames: IGame[] = await getCurrentGameData();
         
         // Pega a lista de jogos instalados em formato JSON usando o legendary
-        const installedGamesRaw = await new Promise((resolve, reject) => {
-            execFile(legendaryExePath, ['list-installed', '--json'], (error, stdout, stderr) => {
+        const installedGamesRaw: string = await new Promise((resolve, reject) => {
+            execFile(legendaryExePath, ['list-installed', '--json'], (error: Error | null, stdout: string, stderr: string) => {
                 if (error) {
                     return reject('Failed to list legendary games: ' + stderr);
                 }
@@ -19,7 +20,7 @@ async function findLegendaryInstalledGames() {
             });
         });
 
-        const newGames = JSON.parse(installedGamesRaw);
+        const newGames: ILegendaryInstalledGame[] = JSON.parse(installedGamesRaw);
         
         if (!newGames || newGames.length === 0) {
             logger.info('No Legendary games found.');
@@ -27,7 +28,7 @@ async function findLegendaryInstalledGames() {
         }
 
         // Filtra jogos que já existem no JSON local
-        const filteredGames = newGames.filter(game =>
+        const filteredGames: ILegendaryInstalledGame[] = newGames.filter(game =>
             !existingGames.some(existingGame => existingGame.appid === game.app_name)
         );
 
@@ -37,11 +38,11 @@ async function findLegendaryInstalledGames() {
         }
 
         // Busca dados no IGDB baseados no título (app_title)
-        const gamesData = await fetchGameDetailsFromIGDB(filteredGames.map(item => item.app_title));
-        const gameObjects = await createGameObjects(gamesData, filteredGames);
+        const gamesData: IIGDBGame[] = await fetchGameDetailsFromIGDB(filteredGames.map(item => item.app_title));
+        const gameObjects: IGame[] = await createGameObjects(gamesData, filteredGames);
         await updateGameData(gameObjects);
        
-    } catch (err) {
+    } catch (err: any) {
         logger.error("LegendaryGameFinder error: " + err);
         console.error('Error in findLegendaryInstalledGames:', err);
         throw err; // Repassa o erro para a UI lidar se necessário
@@ -49,7 +50,7 @@ async function findLegendaryInstalledGames() {
 }
 
 // Função para buscar detalhes dos jogos no IGDB
-async function fetchGameDetailsFromIGDB(gameTitles) {
+async function fetchGameDetailsFromIGDB(gameTitles: string[]): Promise<IIGDBGame[]> {
     if (!gameTitles.length) return [];
     
     // Escapa as aspas corretamente para a query do IGDB
@@ -59,17 +60,17 @@ async function fetchGameDetailsFromIGDB(gameTitles) {
 }
 
 // Função para criar objetos de jogos com base nos dados do IGDB e do Legendary
-async function createGameObjects(gamesData, legendaryGames) {
-    const coverIds = gamesData.map(element => element.cover).filter(id => id !== undefined);
-    const gameCovers = await fetchGameCovers(coverIds);
+async function createGameObjects(gamesData: IIGDBGame[], legendaryGames: ILegendaryInstalledGame[]): Promise<IGame[]> {
+    const coverIds: number[] = gamesData.map(element => element.cover).filter((id): id is number => id !== undefined);
+    const gameCovers: IIGDBCover[] = await fetchGameCovers(coverIds);
     
-    return legendaryGames.map((legGame) => {
+    return legendaryGames.map((legGame: ILegendaryInstalledGame) => {
         // Tenta encontrar o jogo correspondente no retorno do IGDB pelo nome
         const gameData = gamesData.find(g => g.name.toLowerCase() === legGame.app_title.toLowerCase());
         
-        let coverUrl = 'public/eos-icons--loading.svg'; // Placeholder default
-        let description = 'Nenhuma descrição disponível';
-        let genres = [];
+        let coverUrl: string = 'public/eos-icons--loading.svg'; // Placeholder default
+        let description: string = 'Nenhuma descrição disponível';
+        let genres: number[] = [];
         
         if (gameData) {
             const coverData = gameCovers.find(cover => cover.id === gameData.cover);
@@ -95,23 +96,23 @@ async function createGameObjects(gamesData, legendaryGames) {
 }
 
 // Função para buscar as capas dos jogos no IGDB
-async function fetchGameCovers(coverIds) {
+async function fetchGameCovers(coverIds: number[]): Promise<IIGDBCover[]> {
     if (!coverIds.length) return [];
 
-    const whereCondition = `id = ${coverIds.join("| id = ")}`;
+    const whereCondition: string = `id = ${coverIds.join("| id = ")}`;
     try {
-        const covers = await igdbRequisition('covers', "id, url", whereCondition);
+        const covers: IIGDBCover[] = await igdbRequisition('covers', "id, url", whereCondition);
         return covers;
-    } catch (err) {
+    } catch (err: any) {
         logger.error("Error fetching game covers: " + err.message);
         return [];
     }
 }
 
 // Função para atualizar os dados dos jogos no JSON
-async function updateGameData(newGameObjects) {
-    const existingGames = await getCurrentGameData();
-    const updatedGames = [...existingGames, ...newGameObjects];
+async function updateGameData(newGameObjects: IGame[]): Promise<void> {
+    const existingGames: IGame[] = await getCurrentGameData();
+    const updatedGames: IGame[] = [...existingGames, ...newGameObjects];
     await saveGameData(updatedGames);
 }
 
