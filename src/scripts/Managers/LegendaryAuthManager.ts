@@ -1,13 +1,31 @@
 const { BrowserWindow } = require('electron');
 const { spawn, execFile } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 const logger = require('./ErrorLogger');
-import { ILegendaryStatus, IEpicAuthData } from '../../types/index';
+import type { ILegendaryStatus } from '../../types/index';
 
-const legendaryExePath: string = path.join(__dirname, '..', '..', '..', 'bin', 'legendary.exe');
+function getLegendaryPath(): string {
+    const candidates = [
+        path.join(__dirname, '..', '..', '..', 'bin', 'legendary.exe'),
+        path.join(__dirname, '..', '..', '..', 'bin', 'legendary_windows_x64.exe'),
+        path.join(__dirname, '..', '..', '..', 'legendary', 'legendary.exe'),
+        path.join(process.cwd(), 'bin', 'legendary.exe'),
+        path.join(process.cwd(), 'bin', 'legendary_windows_x64.exe'),
+    ];
+
+    for (const p of candidates) {
+        if (fs.existsSync(p)) {
+            return p;
+        }
+    }
+    return candidates[0];
+}
+
+const legendaryExePath: string = getLegendaryPath();
 
 async function checkLegendaryStatus(): Promise<ILegendaryStatus> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         execFile(legendaryExePath, ['status', '--json'], (error: Error | null, stdout: string, stderr: string) => {
             if (error) {
                 logger.error('Failed to get legendary status: ' + stderr);
@@ -26,8 +44,8 @@ async function checkLegendaryStatus(): Promise<ILegendaryStatus> {
 async function loginEpicGames(): Promise<string> {
     return new Promise((resolve, reject) => {
         const authWindow = new BrowserWindow({
-            width: 500,
-            height: 700,
+            width: 520,
+            height: 720,
             webPreferences: {
                 nodeIntegration: false,
                 contextIsolation: true
@@ -36,36 +54,52 @@ async function loginEpicGames(): Promise<string> {
             title: "Login Epic Games"
         });
 
-        const epicLoginUrl = "https://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fredirect";
-        
-        authWindow.webContents.on('did-redirect-navigation', async (event: any, url: string) => {
-            if (url.includes('api/redirect')) {
-                try {
-                    const jsonString = await authWindow.webContents.executeJavaScript('document.body.innerText');
-                    const authData: IEpicAuthData = JSON.parse(jsonString);
-                    
-                    if (authData.sid || authData.authorizationCode) {
-                        authWindow.close();
-                        
-                        const authArg = authData.sid ? ['auth', '--sid', authData.sid] : ['auth', '--code', authData.authorizationCode];
-                        
-                        execFile(legendaryExePath, authArg, (error: Error | null, stdout: string, stderr: string) => {
-                            if (error) {
-                                logger.error('Legendary Auth failed: ' + stderr);
-                                reject('Autenticação no Legendary falhou: ' + stderr);
-                            } else {
-                                resolve('Login efetuado com sucesso!');
-                            }
-                        });
+        const epicLoginUrl = "https://legendary.gl/epiclogin";
+        let isResolved = false;
+
+        const checkPageForAuthCode = async () => {
+            if (isResolved) return;
+            try {
+                const jsonString = await authWindow.webContents.executeJavaScript('document.body ? document.body.innerText : ""');
+                if (jsonString && jsonString.includes('{')) {
+                    const match = jsonString.match(/\{[\s\S]*\}/);
+                    if (match) {
+                        const parsed = JSON.parse(match[0]);
+                        const authCode = parsed.authorizationCode || parsed.code || parsed.exchangeCode || parsed.sid;
+                        if (authCode) {
+                            isResolved = true;
+                            authWindow.close();
+
+                            const authArgs = parsed.authorizationCode
+                                ? ['auth', '--code', parsed.authorizationCode]
+                                : parsed.sid
+                                ? ['auth', '--sid', parsed.sid]
+                                : ['auth', '--code', authCode];
+
+                            execFile(legendaryExePath, authArgs, (error: Error | null, stdout: string, stderr: string) => {
+                                if (error) {
+                                    logger.error('Legendary Auth failed: ' + stderr);
+                                    reject('Autenticação no Legendary falhou: ' + stderr);
+                                } else {
+                                    resolve('Login efetuado com sucesso!');
+                                }
+                            });
+                        }
                     }
-                } catch(err) {
-                    console.error("Não foi possível parsear os dados de login: ", err);
                 }
+            } catch (err) {
+                // Not a json page yet, continue waiting
             }
-        });
+        };
+
+        authWindow.webContents.on('did-finish-load', checkPageForAuthCode);
+        authWindow.webContents.on('did-navigate', checkPageForAuthCode);
+        authWindow.webContents.on('did-redirect-navigation', checkPageForAuthCode);
 
         authWindow.on('closed', () => {
-            reject('A janela de login foi fechada pelo usuário.');
+            if (!isResolved) {
+                reject('A janela de login foi fechada pelo usuário.');
+            }
         });
 
         authWindow.loadURL(epicLoginUrl);
