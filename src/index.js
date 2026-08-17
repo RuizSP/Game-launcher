@@ -5,6 +5,8 @@ const fs = require('fs');
 const { title } = require('node:process');
 const steamApiConection = require('./scripts/SteamApiConection');
 const findEpicInstalledGames = require('./scripts/GameFinders/EpicGameFinder');
+const findLegendaryInstalledGames = require('./scripts/GameFinders/LegendaryGameFinder');
+const { checkLegendaryStatus, loginEpicGames, runLegendaryApp } = require('./scripts/Managers/LegendaryAuthManager');
 const logger = require('./scripts/Managers/ErrorLogger');
 const { getCurrentGameData, saveGameData,createGameObject} = require('./scripts/Managers/GameDataManager');
 
@@ -13,8 +15,9 @@ async function getGames(library)
   console.log(library);
   if(library === 'steam'){
     await steamApiConection();
-  }else if(library === 'epic'){
-    await findEpicInstalledGames();
+  }else if(library === 'epic' || library === 'legendary'){
+    // Usa o legendary para a Epic Games e/ou Legendary
+    await findLegendaryInstalledGames();
   }
 }
 
@@ -173,6 +176,18 @@ ipcMain.handle('play-game', async(event, executablePath) =>{
   ipcMain.handle('sync-libraries', async(event,library) =>{
     await getGames(library);
   })
+
+  ipcMain.handle('check-legendary-status', async () => {
+    return await checkLegendaryStatus();
+  });
+
+  ipcMain.handle('login-epic-games', async () => {
+    return await loginEpicGames();
+  });
+
+  ipcMain.handle('run-legendary-app', async (event, appName) => {
+    return await runLegendaryApp(appName);
+  });
 
   ipcMain.handle('app-quit', ()=>{
     app.quit();

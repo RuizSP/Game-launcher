@@ -14,7 +14,10 @@ contextBridge.exposeInMainWorld('electron', {
   navigate: (page, game)=> ipcRenderer.send('navigate', page, game),
   loadGameData: () => ipcRenderer.invoke('load-game-data'),
   quitApp: () => ipcRenderer.invoke('app-quit'),
-  fetchGameData: () => ipcRenderer.invoke('fetch-game-data')
+  fetchGameData: () => ipcRenderer.invoke('fetch-game-data'),
+  checkLegendaryStatus: () => ipcRenderer.invoke('check-legendary-status'),
+  loginEpicGames: () => ipcRenderer.invoke('login-epic-games'),
+  runLegendaryApp: (appName) => ipcRenderer.invoke('run-legendary-app', appName)
 });
 
 

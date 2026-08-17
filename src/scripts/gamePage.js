@@ -52,11 +52,23 @@ function addEventToPlayButton()
       {
         runSteamApp(game.appid);
       }
+    else if(game.library === 'legendary')
+      {
+        runLegendaryApp(game.appid || game.exe);
+      }
     else
       {
         runExecutable(game.exe);    
       }
   });
+}
+
+function runLegendaryApp(appName)
+{
+  console.log('Launch Legendary App:', appName);
+  window.electron.runLegendaryApp(appName)
+    .then(output => console.log(output))
+    .catch(error => console.error(error));
 }
 
 function runSteamApp(steamAppId)

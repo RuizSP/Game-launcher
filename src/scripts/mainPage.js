@@ -74,18 +74,30 @@ btnSteamSync.addEventListener('click', async () => {
 });
 
 btnEpicSync.addEventListener('click', async() =>{
-
   try{
     loadBar.style.display = 'inline';
-    await window.electron.syncLibraries('epic');
+    
+    // Verifica status do login no Legendary
+    const status = await window.electron.checkLegendaryStatus();
+    
+    if (!status.loggedIn) {
+      loadBar.style.display = 'none';
+      // Abre a janela de login
+      const loginResult = await window.electron.loginEpicGames();
+      console.log(loginResult);
+      loadBar.style.display = 'inline';
+    }
+
+    // Após o login (ou se já estava logado), sincroniza os jogos
+    await window.electron.syncLibraries('legendary');
   }catch(err)
   {
-    alert('Cannot find epic installed games');
+    console.error(err);
+    alert('Erro ao sincronizar jogos da Epic/Legendary: ' + err);
   }finally{
     loadBar.style.display = 'none';
     fetchgames();
   }
-
 })
 
 
