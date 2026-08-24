@@ -14,7 +14,9 @@ const electronAPI: IElectronAPI = {
   fetchGameData: () => ipcRenderer.invoke('fetch-game-data'),
   checkLegendaryStatus: () => ipcRenderer.invoke('check-legendary-status'),
   loginEpicGames: () => ipcRenderer.invoke('login-epic-games'),
-  runLegendaryApp: (appName: string) => ipcRenderer.invoke('run-legendary-app', appName)
+  runLegendaryApp: (appName: string) => ipcRenderer.invoke('run-legendary-app', appName),
+  installLegendaryApp: (appName: string) => ipcRenderer.invoke('install-legendary-app', appName),
+  checkLegendaryInstalled: (appName: string) => ipcRenderer.invoke('check-legendary-installed', appName)
 };
 
 contextBridge.exposeInMainWorld('electron', electronAPI);

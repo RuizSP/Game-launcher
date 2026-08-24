@@ -29,7 +29,8 @@ function createGameObject(params: IGameParams): IGame {
         tags: params.tags,
         icon: params.icon,
         exe: params.exe,
-        genres: params.genres
+        genres: params.genres,
+        isInstalled: params.isInstalled
     };
 }
 

@@ -21,7 +21,7 @@
             </p>
             <p>
               <img src="public/clarity--date-line.svg" alt="date">
-              Last Played: <span>00/00/0000</span>
+              Status: <span id="install-status">Checking...</span>
             </p>   
           </div>
       </section>
@@ -33,9 +33,13 @@
           <div class="game-tags" id="game-tags">
           </div>
       </section>
-    <footer class="footer">
+      <footer class="footer">
+          <div id="installProgressContainer" style="display: none; align-items: center; gap: 12px; flex: 1; margin-right: 20px;">
+              <span id="installProgressText" style="font-size: 14px; font-weight: 500; min-width: 140px; color: white;">Baixando jogo...</span>
+              <mdui-linear-progress style="flex: 1;"></mdui-linear-progress>
+          </div>
           <mdui-button variant="outlined" id="backButton">Back</mdui-button>
-          <mdui-button variant="filled" id="playButton">Play</mdui-button>
+          <mdui-button variant="filled" id="playButton">Jogar</mdui-button>
       </footer>
       <script src="../dist/scripts/gamePage.js"></script>
 </body>

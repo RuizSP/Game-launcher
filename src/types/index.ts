@@ -20,6 +20,7 @@ export interface IGame {
   icon?: string;
   exe?: string;
   genres?: number[];
+  isInstalled?: boolean;
 }
 
 export interface IGameParams {
@@ -33,6 +34,7 @@ export interface IGameParams {
   icon?: string;
   exe?: string;
   genres?: number[];
+  isInstalled?: boolean;
 }
 
 export interface IGameFinderResult {
@@ -116,6 +118,8 @@ export interface IElectronAPI {
   checkLegendaryStatus: () => Promise<ILegendaryStatus>;
   loginEpicGames: () => Promise<string>;
   runLegendaryApp: (appName: string) => Promise<string>;
+  installLegendaryApp: (appName: string) => Promise<string>;
+  checkLegendaryInstalled: (appName: string) => Promise<boolean>;
 }
 
 declare global {
@@ -135,6 +139,7 @@ declare global {
     icon?: string;
     exe?: string;
     genres?: number[];
+    isInstalled?: boolean;
   }
   interface ILegendaryStatus {
     loggedIn: boolean;
@@ -160,6 +165,8 @@ declare global {
     checkLegendaryStatus: () => Promise<ILegendaryStatus>;
     loginEpicGames: () => Promise<string>;
     runLegendaryApp: (appName: string) => Promise<string>;
+    installLegendaryApp: (appName: string) => Promise<string>;
+    checkLegendaryInstalled: (appName: string) => Promise<boolean>;
   }
   interface Window {
     electron: IElectronAPI;

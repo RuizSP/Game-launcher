@@ -7,7 +7,7 @@ import { IGame } from './types/index';
 const steamApiConection = require('./scripts/SteamApiConection');
 const findEpicInstalledGames = require('./scripts/GameFinders/EpicGameFinder');
 const findLegendaryInstalledGames = require('./scripts/GameFinders/LegendaryGameFinder');
-const { checkLegendaryStatus, loginEpicGames, runLegendaryApp } = require('./scripts/Managers/LegendaryAuthManager');
+const { checkLegendaryStatus, loginEpicGames, runLegendaryApp, checkLegendaryInstalled, installLegendaryApp } = require('./scripts/Managers/LegendaryAuthManager');
 const logger = require('./scripts/Managers/ErrorLogger');
 const { getCurrentGameData, saveGameData, createGameObject } = require('./scripts/Managers/GameDataManager');
 
@@ -165,6 +165,14 @@ ipcMain.handle('login-epic-games', async () => {
 
 ipcMain.handle('run-legendary-app', async (event: IpcMainInvokeEvent, appName: string) => {
   return await runLegendaryApp(appName);
+});
+
+ipcMain.handle('check-legendary-installed', async (event: IpcMainInvokeEvent, appName: string): Promise<boolean> => {
+  return await checkLegendaryInstalled(appName);
+});
+
+ipcMain.handle('install-legendary-app', async (event: IpcMainInvokeEvent, appName: string): Promise<string> => {
+  return await installLegendaryApp(appName);
 });
 
 ipcMain.handle('app-quit', () => {

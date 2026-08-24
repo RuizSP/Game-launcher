@@ -53,6 +53,8 @@ async function findLegendaryGames(): Promise<void> {
             allGames = [];
         }
 
+        const installedAppNames = new Set<string>(installedGames.map(g => g.app_name));
+
         // Combina as listas (priorizando installed se houver)
         const combinedMap = new Map<string, ILegendaryGameEntry>();
 
@@ -79,18 +81,28 @@ async function findLegendaryGames(): Promise<void> {
             return;
         }
 
-        // Filtra jogos que já existem no JSON local
-        const newGameObjects: IGame[] = [];
+        const updatedGames: IGame[] = [...existingGames];
+        let hasChanges = false;
 
         for (const item of targetGames) {
             const appName = item.app_name;
             const title = item.app_title || item.metadata?.title || item.title || appName;
+            const isInstalled = installedAppNames.has(appName);
 
-            const alreadyExists = existingGames.some(
-                g => g.appid === appName || (g.title && g.title.toLowerCase() === title.toLowerCase())
+            const existingIndex = updatedGames.findIndex(
+                g => g.appid === appName || (g.title && g.title.toLowerCase() === title.toLowerCase() && g.library === 'legendary')
             );
 
-            if (!alreadyExists) {
+            if (existingIndex !== -1) {
+                // Atualiza status de instalação se tiver mudado
+                if (updatedGames[existingIndex].isInstalled !== isInstalled) {
+                    updatedGames[existingIndex].isInstalled = isInstalled;
+                    if (item.executable) {
+                        updatedGames[existingIndex].exe = item.executable;
+                    }
+                    hasChanges = true;
+                }
+            } else {
                 // Extrai a melhor capa dos keyImages da Epic
                 let coverUrl = 'public/eos-icons--loading.svg';
                 const images = item.metadata?.keyImages || [];
@@ -109,23 +121,24 @@ async function findLegendaryGames(): Promise<void> {
 
                 const description = item.metadata?.description || 'Jogo da Epic Games Store (Legendary)';
 
-                newGameObjects.push(createGameObject({
+                updatedGames.push(createGameObject({
                     title: title,
                     cover: coverUrl,
                     appid: appName,
                     library: 'legendary',
                     description: description,
-                    exe: item.executable || appName
+                    exe: item.executable || appName,
+                    isInstalled: isInstalled
                 }));
+                hasChanges = true;
             }
         }
 
-        if (newGameObjects.length > 0) {
-            const updatedGames = [...existingGames, ...newGameObjects];
+        if (hasChanges) {
             await saveGameData(updatedGames);
-            console.log(`Sucesso: ${newGameObjects.length} novos jogos importados da Epic/Legendary!`);
+            console.log(`Sucesso: Dados da Epic/Legendary sincronizados com sucesso.`);
         } else {
-            console.log('Todos os jogos da Epic/Legendary já estão importados.');
+            console.log('Todos os jogos da Epic/Legendary já estão atualizados.');
         }
 
     } catch (err: any) {

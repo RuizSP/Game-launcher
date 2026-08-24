@@ -106,6 +106,59 @@ async function loginEpicGames(): Promise<string> {
     });
 }
 
+function checkLegendaryInstalled(appName: string): Promise<boolean> {
+    return new Promise((resolve) => {
+        execFile(legendaryExePath, ['list-installed', '--json'], (error: Error | null, stdout: string) => {
+            if (error) {
+                return resolve(false);
+            }
+            try {
+                const installedGames = JSON.parse(stdout) || [];
+                const isInstalled = installedGames.some((g: any) => g.app_name === appName || g.app_title === appName || g.title === appName);
+                resolve(isInstalled);
+            } catch (err) {
+                resolve(false);
+            }
+        });
+    });
+}
+
+function installLegendaryApp(appName: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const child = spawn(legendaryExePath, ['install', appName, '--skip-sdl', '--skip-dlcs', '-y'], {
+            shell: false,
+            stdio: ['ignore', 'pipe', 'pipe']
+        });
+
+        let output: string = '';
+        let errorOutput: string = '';
+
+        child.stdout?.on('data', (data: Buffer) => {
+            const str = data.toString();
+            output += str;
+            console.log('[Legendary Install]', str);
+        });
+
+        child.stderr?.on('data', (data: Buffer) => {
+            const str = data.toString();
+            errorOutput += str;
+            console.log('[Legendary Install Log]', str);
+        });
+
+        child.on('close', (code: number) => {
+            if (code === 0) {
+                resolve(`Instalação concluída com sucesso!`);
+            } else {
+                reject(`Falha ao instalar o jogo: ${errorOutput || output}`);
+            }
+        });
+
+        child.on('error', (err: Error) => {
+            reject(`Erro ao executar instalação: ${err.message}`);
+        });
+    });
+}
+
 function runLegendaryApp(appName: string): Promise<string> {
     return new Promise((resolve, reject) => {
         const child = spawn(legendaryExePath, ['launch', appName], {
@@ -141,6 +194,8 @@ function runLegendaryApp(appName: string): Promise<string> {
 module.exports = {
     checkLegendaryStatus,
     loginEpicGames,
+    checkLegendaryInstalled,
+    installLegendaryApp,
     runLegendaryApp,
     legendaryExePath
 };
